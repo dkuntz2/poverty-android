@@ -11,12 +11,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.util.List;
 
 import co.kuntz.poverty.http.HttpFuture;
 import co.kuntz.poverty.http.PovertyHttpClient;
 import co.kuntz.poverty.models.Item;
+import co.kuntz.poverty.views.ItemView;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -111,6 +113,9 @@ public class MainActivity extends ActionBarActivity {
                 for (Item thing : things) {
                     Log.d(TAG, ".. " + thing.getItemName());
                 }
+
+                ItemView itemView = (ItemView) findViewById(R.id.item_view);
+                itemView.set(things.get(0));
             }
 
             @Override

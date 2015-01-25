@@ -7,12 +7,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 public class Item {
+
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+
 
     private long date;
     private String iname;
@@ -34,6 +40,15 @@ public class Item {
 
     public long getDate() {
         return date;
+    }
+
+    public String getDateString() {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(getDate());
+        cal.setTimeZone(TimeZone.getDefault());
+
+
+        return DATE_FORMAT.format(cal.getTime());
     }
 
     public void setDate(long date) {
