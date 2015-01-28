@@ -1,24 +1,29 @@
-package co.kuntz.poverty;
+package co.kuntz.poverty.activities;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.ListView;
+
+import com.melnykov.fab.FloatingActionButton;
 
 import java.util.List;
 
+import co.kuntz.poverty.R;
 import co.kuntz.poverty.http.HttpFuture;
 import co.kuntz.poverty.http.PovertyHttpClient;
 import co.kuntz.poverty.models.Item;
-import co.kuntz.poverty.views.ItemView;
+import co.kuntz.poverty.views.ItemListAdapter;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -26,7 +31,9 @@ public class MainActivity extends ActionBarActivity {
     public static final String PREFS_FILE = TAG + ".preferences";
     public static final String PREFS_USER_NAME = "userName";
 
-    private String currentUser = "don"; // TODO make this dynamic using kickoff();
+    public static String currentUser = "don"; // TODO make this dynamic using kickoff();
+
+    private ItemListAdapter itemListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +44,17 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        ListView listView = (ListView) findViewById(R.id.list_items);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.action_button);
+        fab.attachToListView(listView);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, NewItemActivity.class);
+                startActivity(intent);
+            }
+        });
 
         //kickoff();
         initializeData(); // TODO remove this and switch to kickoff
@@ -114,8 +132,19 @@ public class MainActivity extends ActionBarActivity {
                     Log.d(TAG, ".. " + thing.getItemName());
                 }
 
-                ItemView itemView = (ItemView) findViewById(R.id.item_view);
-                itemView.set(things.get(0));
+                ListView listView = (ListView) findViewById(R.id.list_items);
+                itemListAdapter = new ItemListAdapter(MainActivity.this, things, new HttpFuture<String>() {
+                    @Override
+                    public void onSuccess(String thing) {
+                        initializeData();
+                    }
+
+                    @Override
+                    public void onFailure(String responseString, Throwable t) {
+                        Log.d(TAG, "error removing item...", t);
+                    }
+                });
+                listView.setAdapter(itemListAdapter);
             }
 
             @Override

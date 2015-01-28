@@ -17,25 +17,35 @@ import java.util.TimeZone;
 
 public class Item {
 
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-
+    //public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");  // 2015-01-15
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("d MMMM, yyyy"); // 15 January, 2015
 
     private long date;
     private String iname;
     private double amount;
     private List<String> categories;
     private String uname;
+    private int id;
 
     public Item() {
         this.date = new Date().getTime();
     }
 
-    public Item(String itemName, double amount, List<String> categories, String user) {
+    public Item(int id, String itemName, double amount, List<String> categories, String user) {
         this();
+        this.id = id;
         this.iname = itemName;
         this.amount = amount;
         this.categories = categories;
         this.uname = user;
+    }
+
+    public int getId() {
+        return id;
+   }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public long getDate() {
@@ -104,6 +114,7 @@ public class Item {
         try {
             JSONObject json = new JSONObject();
 
+            json.put("id", getId());
             json.put("iname", getItemName());
             json.put("uname", getUser());
             json.put("date", getDate());
@@ -120,6 +131,7 @@ public class Item {
         try {
             Item item = new Item();
 
+            item.setId(json.getInt("id"));
             item.setAmount(json.getDouble("amount"));
             item.setItemName(json.getString("iname"));
             item.setDate(json.getLong("date"));
